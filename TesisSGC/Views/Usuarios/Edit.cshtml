@@ -1,0 +1,114 @@
+﻿@model Usuario
+
+@{
+    ViewBag.Title = "Editar Usuario";
+}
+
+<h2 class="mb-4">Editar Usuario</h2>
+
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+        @if (TempData["Mensaje"] != null)
+        {
+            <div class="alert alert-success">@TempData["Mensaje"]</div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.IdUsuario)
+            @Html.HiddenFor(model => model.Contrasena)
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.NombreUsuario, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.NombreUsuario, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreUsuario, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Rol, "Rol", htmlAttributes: new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.Rol,
+                    new SelectList(
+                        new[] {
+                            new { Value = "administrador", Text = "Administrador" },
+                            new { Value = "socio", Text = "Socio" }
+                        },
+                        "Value",
+                        "Text",
+                        Model != null ? Model.Rol : null
+                    ),
+                    "-- Seleccione un rol --",
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Rol, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.IdSocio, "Socio (opcional)", htmlAttributes: new { @class = "form-label" })
+                @Html.DropDownList(
+                    "IdSocio",
+                    new SelectList(
+                        ViewBag.IdSocio as SelectList,
+                        "Value",
+                        "Text",
+                        Model != null && Model.IdSocio != null ? Model.IdSocio.ToString() : ""
+                    ),
+                    "-- Sin socio asociado --",
+                    new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.IdSocio, "", new { @class = "text-danger" })
+            </div>
+
+
+            <div class="d-flex gap-2 mt-4">
+                <input type="submit" value="Guardar cambios" class="btn btn-success" />
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        }
+
+        <hr />
+        <h4>Cambiar contraseña</h4>
+
+        <button type="button" class="btn btn-outline-primary mb-3" onclick="togglePasswordFields()">Cambiar contraseña</button>
+
+        <div id="passwordSection" style="display:none;">
+            @using (Html.BeginForm("CambiarContrasena", "Usuarios", FormMethod.Post, new { @class = "mb-3" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("IdUsuario", Model.IdUsuario)
+
+                <div class="mb-3">
+                    <label for="NuevaContrasena" class="form-label">Nueva contraseña</label>
+                    <input type="password" name="NuevaContrasena" class="form-control" required />
+                </div>
+
+                <div class="mb-3">
+                    <label for="RepetirContrasena" class="form-label">Repetir contraseña</label>
+                    <input type="password" name="RepetirContrasena" class="form-control" required />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Guardar contraseña</button>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        function togglePasswordFields() {
+            var section = document.getElementById("passwordSection");
+            section.style.display = section.style.display === "none" ? "block" : "none";
+        }
+    </script>
+}
+

@@ -1,0 +1,44 @@
+﻿@model IEnumerable<TesisSGC.PagoSocio>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Tipo de Cuota</th>
+            <th>Socio</th>
+            <th>Fecha de Pago</th>
+            <th>Monto</th>
+            <th>Forma de Pago</th>
+            <th>Tipo de Pago</th>
+            <th>Observaciones</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="8" class="text-center text-muted">No se encontraron pagos.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CuotaMensual.Tipo</td>
+                    <td>@item.Socio.NombreSocio (@item.Socio.CI)</td>
+                    <td>@item.FechaPago.ToString("dd/MM/yyyy")</td>
+                    <td>@item.Monto.ToString("N2")</td>
+                    <td>@item.FormaPago</td>
+                    <td>@item.TipoPago</td>
+                    <td>@item.Observaciones</td>
+                    <td class="text-center">
+                        @Html.ActionLink("Editar", "Edit", new { id = item.IdPagoSocio }, new { @class = "btn btn-sm btn-primary me-1" })
+                        @Html.ActionLink("Detalles", "Details", new { id = item.IdPagoSocio }, new { @class = "btn btn-sm btn-info me-1" })
+                        @Html.ActionLink("Eliminar", "Delete", new { id = item.IdPagoSocio }, new { @class = "btn btn-sm btn-danger" })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

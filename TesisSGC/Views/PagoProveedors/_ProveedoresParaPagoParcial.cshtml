@@ -1,0 +1,36 @@
+﻿@model IEnumerable<TesisSGC.Proveedor>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>RUC</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th class="text-center">Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="5" class="text-center text-muted">No se encontraron resultados.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>@item.RUT</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.Telefono</td>
+                    <td class="text-center">
+                        @Html.ActionLink("Ingresar pago", "Create", "PagoProveedors", new { idProveedor = item.IdProveedor }, new { @class = "btn btn-sm btn-primary" })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

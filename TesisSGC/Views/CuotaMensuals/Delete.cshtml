@@ -1,0 +1,72 @@
+﻿@model TesisSGC.CuotaMensual
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>CuotaMensual</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Cuenta.IdCuenta)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cuenta.IdCuenta)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Socio.NombreSocio)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Socio.NombreSocio)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UR.IdUR)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UR.IdUR)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Mes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Mes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Monto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Monto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EstaPagada)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EstaPagada)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

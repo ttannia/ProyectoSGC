@@ -1,0 +1,43 @@
+﻿@model IEnumerable<TesisSGC.CuotaMensual>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Socio</th>
+            <th>Mes</th>
+            <th>Tipo</th> 
+            <th>Monto (UR)</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted">No se encontraron resultados.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Socio.NombreSocio (@item.Socio.CI)</td>
+                    <td>@item.Mes.ToString("MMMM yyyy")</td>
+                    <td>@item.Tipo</td>
+                    <td>@item.Monto.ToString("F2")</td>
+
+                    <td>
+                        <span class="badge @(item.EstaPagada ? "bg-success" : "bg-warning text-dark")">
+                            @(item.EstaPagada ? "Pagada" : "Pendiente")
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        @Html.ActionLink("Editar", "Edit", new { id = item.IdCuotaMensual }, new { @class = "btn btn-sm btn-primary" })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

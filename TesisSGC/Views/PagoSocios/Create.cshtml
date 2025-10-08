@@ -1,0 +1,257 @@
+﻿@model TesisSGC.PagoSocio
+@{
+    ViewBag.Title = "Registrar Pago";
+}
+
+<h2 class="mb-4">Registrar Pago</h2>
+
+@using (Html.BeginForm("Create", "PagoSocios", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="alert" style="background-color: #d4edda; color: #155724;">
+                <label>Socio:</label> <strong>@ViewBag.NombreSocio</strong> (CI: @ViewBag.CI)
+                @Html.HiddenFor(m => m.IdSocio)
+            </div>
+
+
+            <div class="form-group mb-3">
+                <label>Cuota a pagar:</label>
+                <select id="cuotaSelect" name="IdCuotaMensual" class="form-control">
+                    <option value="">Seleccione cuota</option>
+                    @foreach (var cuota in (List<TesisSGC.CuotaMensual>)ViewBag.Cuotas)
+                    {
+                        var valoresUR = (List<dynamic>)ViewBag.ValoresUR;
+                        var urMes = valoresUR.FirstOrDefault(u => DateTime.Parse(u.Mes).Date == cuota.Mes.Date);
+                        decimal valorUR = (urMes != null) ? urMes.Monto : 1;
+
+                        var pagos = cuota.PagoSocios != null ? cuota.PagoSocios.ToList() : new List<TesisSGC.PagoSocio>();
+                        var totalPagadoUR = pagos.Sum(p => p.Monto / valorUR);
+                        var restanteUR = cuota.SaldoPendiente;
+
+                        <option value="@cuota.IdCuotaMensual"
+                                data-monto="@cuota.Monto.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                data-tipo="@cuota.Tipo"
+                                data-mes="@cuota.Mes.ToString("yyyy-MM-dd")"
+                                data-valorur="@valorUR"
+                                data-restanteur="@restanteUR.ToString(System.Globalization.CultureInfo.InvariantCulture)">
+                            @cuota.Mes.ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))
+                            (@cuota.Tipo)
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div id="infoCuota" class="mb-2 fw-bold"></div>
+            <div id="SaldoPendiente" class="mb-3 fw-bold"></div>
+
+            <div class="form-group mb-3">
+                <label>Monto en pesos:</label>
+                @Html.TextBoxFor(m => m.Monto, new { @class = "form-control", type = "number", step = "0.01", min = "0.01", required = "required", id = "Monto" })
+                @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Monto en UR:</label>
+                <input type="text" id="MontoUR" class="form-control" readonly="readonly" />
+            </div>
+
+            <div class="form-group mb-3" style="display:none;" id="tipoPagoDiv">
+                <label>Tipo de pago:</label>
+                @Html.TextBoxFor(m => m.TipoPago, new { @readonly = "readonly", @class = "form-control", id = "TipoPago" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Forma de pago:</label>
+                @Html.DropDownListFor(m => m.FormaPago,
+                      new SelectList(new[]
+                      {
+                          new { Value = "Transferencia", Text = "Transferencia" },
+                          new { Value = "Efectivo", Text = "Efectivo" },
+                          new { Value = "Débito", Text = "Débito" },
+                          new { Value = "Cheque", Text = "Cheque" }
+                      }, "Value", "Text"),
+                      "Seleccione forma de pago",
+                      new { @class = "form-control", required = "required", id = "FormaPago" })
+            </div>
+
+            <div class="form-group mb-3" style="display:none;" id="numeroTransferenciaDiv">
+                <label>Número de transferencia:</label>
+                @Html.TextBoxFor(m => m.NumeroTransferencia, new { type = "number", @class = "form-control", min = "0" })
+                @Html.ValidationMessageFor(m => m.NumeroTransferencia, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3" style="display:none;" id="numeroChequeDiv">
+                <label>Número de cheque:</label>
+                @Html.TextBoxFor(m => m.NumeroCheque, new { type = "number", @class = "form-control", min = "0" })
+                @Html.ValidationMessageFor(m => m.NumeroCheque, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3" style="display:none;" id="numeroTransaccionDiv">
+                <label>Número de transacción:</label>
+                @Html.TextBoxFor(m => m.NumeroTransaccion, new { type = "number", @class = "form-control", min = "0" })
+                @Html.ValidationMessageFor(m => m.NumeroTransaccion, "", new { @class = "text-danger" })
+            </div>
+
+            <div id="validationSummaryConditional" class="text-danger">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    var camposCondicionales = new[] { "NumeroTransferencia", "NumeroCheque", "NumeroTransaccion" };
+                    foreach (var campo in camposCondicionales)
+                    {
+                        if (ViewData.ModelState[campo] != null && ViewData.ModelState[campo].Errors.Count > 0)
+                        {
+                            foreach (var error in ViewData.ModelState[campo].Errors)
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        }
+                    }
+                }
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Fecha de pago:</label>
+                @Html.TextBoxFor(m => m.FechaPago, new { @class = "form-control", type = "date", required = "required", value = Model.FechaPago.ToString("yyyy-MM-dd"), id = "fechaPagoInput" })
+                <div class="mt-2 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="setTodayDate()">Hoy</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearDate()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Observaciones:</label>
+                @Html.TextAreaFor(m => m.Observaciones, new { @class = "form-control", rows = "3" })
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success">Guardar pago</button>
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const valoresUR = @Html.Raw(Json.Encode(ViewBag.ValoresUR));
+
+            function actualizarDatos() {
+                var selected = $('#cuotaSelect').find(':selected');
+                if (!selected.val()) {
+                    $('#infoCuota').text('');
+                    $('#SaldoPendiente').text('');
+                    $('#TipoPago').val('');
+                    $('#tipoPagoDiv').hide();
+                    $('#Monto').val('');
+                    $('#MontoUR').val('');
+                    return;
+                }
+
+                var montoURcuota = parseFloat(selected.data('monto')); // cuota en UR
+                var tipo = selected.data('tipo');
+                var mesCuotaString = selected.data('mes');
+                var valorURdelMes = parseFloat(selected.data('valorur')) || 0;
+                var restanteUR = parseFloat(selected.data('restanteur')) || 0;
+
+                if (valorURdelMes > 0) {
+                    var restantePesos = restanteUR * valorURdelMes;
+
+                    // ✅ mostramos la info fuera del dropdown
+                    $('#infoCuota').text(
+                        `Monto de la cuota: ${montoURcuota.toFixed(2)} UR | $${(montoURcuota * valorURdelMes).toFixed(2)}`
+                    );
+
+                    $('#SaldoPendiente').text(
+                        `Saldo pendiente: ${restanteUR.toFixed(2)} UR | $${(restanteUR * valorURdelMes).toFixed(2)}`
+                    );
+
+                    // Tipo de pago automático
+                    var tipoPago = "";
+                    if (tipo === 'ingreso') {
+                        tipoPago = 'Corriente';
+                    } else if (tipo === 'vivienda' || tipo === 'gastos comunes') {
+                        tipoPago = 'Capital';
+                    } else {
+                        tipoPago = 'Otro';
+                    }
+                    $('#TipoPago').val(tipoPago);
+                    $('#tipoPagoDiv').show();
+
+                    // Cuando el usuario ingrese monto en pesos → convertir a UR
+                    $('#Monto').off('input').on('input', function () {
+                        var montoPesos = parseFloat($(this).val().replace(',', '.')) || 0;
+                        if (valorURdelMes > 0 && montoPesos > 0) {
+                            $('#MontoUR').val((montoPesos / valorURdelMes).toFixed(2));
+                        } else {
+                            $('#MontoUR').val('');
+                        }
+                    });
+                }
+            }
+
+            $('#cuotaSelect').change(actualizarDatos);
+
+            // Mostrar/ocultar campos según FormaPago
+            $('#FormaPago').change(function () {
+                var seleccion = $(this).val();
+                if (seleccion === "Transferencia") {
+                    $('#numeroTransferenciaDiv').show();
+                    $('#numeroChequeDiv').hide();
+                    $('#numeroTransaccionDiv').hide();
+                } else if (seleccion === "Cheque") {
+                    $('#numeroChequeDiv').show();
+                    $('#numeroTransferenciaDiv').hide();
+                    $('#numeroTransaccionDiv').hide();
+                } else if (seleccion === "Débito") {
+                    $('#numeroTransaccionDiv').show();
+                    $('#numeroTransferenciaDiv').hide();
+                    $('#numeroChequeDiv').hide();
+                } else {
+                    $('#numeroTransferenciaDiv').hide();
+                    $('#numeroChequeDiv').hide();
+                    $('#numeroTransaccionDiv').hide();
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function setTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayFormatted = `${year}-${month}-${day}`;
+            document.getElementById('fechaPagoInput').value = todayFormatted;
+        }
+
+        function clearDate() {
+            document.getElementById('fechaPagoInput').value = '';
+        }
+    </script>
+
+    @if (ViewBag.ComprobanteId != null)
+    {
+        <a id="downloadComprobante" href="@Url.Action("Comprobante", "PagoSocios", new { id = ViewBag.ComprobanteId })" download style="display:none;">Download</a>
+    }
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var link = document.getElementById('downloadComprobante');
+            if(link) {
+                // Para forzar la descarga en navegadores que respetan 'download'
+                link.click();
+
+                // Redirigir al índice después
+                window.location.href = '@Url.Action("Index", "PagoSocios")';
+            }
+        });
+    </script>
+
+
+}

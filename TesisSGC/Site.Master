@@ -16,6 +16,8 @@
     <webopt:bundlereference runat="server" path="~/Content/css" /> 
     
     <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-..." crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
 </head>
 <body>
@@ -41,31 +43,90 @@
 
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" runat="server" href="~/">Nombre de la aplicación</a>
+                <a class="navbar-brand" runat="server" href="~/Default">SISTEMA DE GESTIÓN COOPERATIVO</a>
                 <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Alternar navegación" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/">Inicio</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/About">Acerca de</a></li>
-                        <li class="nav-item"><a class="nav-link" runat="server" href="~/Contact">Contacto</a></li>
-                    </ul>
+                        <li class="nav-item"><a class="nav-link" runat="server" id="Inicio" href="~/Default">Inicio</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" id="Socios" href="~/About">Socios</a></li>
+                            
+                        <li class="nav-item dropdown" runat="server" id="Proveedores">
+                            <a class="nav-link dropdown-toggle" href="#" id="ProveedoresDropdown" 
+                               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Proveedores
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="administracionDropdown">
+                                <li><a class="dropdown-item" href="/Proveedors/Index">Ir a Proveedores</a></li>
+                                <li><a class="dropdown-item" href="/PagoProveedors/Index">Ir a Pagos Proveedores</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" runat="server" id="Caja" href="~/Caja/Index">Caja</a></li>
+                        <li class="nav-item"><a class="nav-link" runat="server" id="Reporte" href="~/Reportes/Index">Reportes</a></li>
+
+                        <li class="nav-item dropdown" runat="server" id="Administracion">
+                        <a class="nav-link dropdown-toggle" href="#" id="administracionDropdown" 
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Administración
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="administracionDropdown">
+                            <li><a class="dropdown-item" href="/URs/Index">Ir a sección Unidad Reajustable (UR)</a></li>
+                            <li><a class="dropdown-item" href="/Usuarios/Index">Ir a sección Usuarios</a></li>
+                        </ul>
+                    </li>
+
+                        </ul>
+                        <asp:Label ID="lblError" runat="server" CssClass="text-danger me-3" Visible="false"></asp:Label>
+                   <a href="#" id="btnLogout" class="btn btn-outline-danger me-2">
+                    <i class="bi bi-box-arrow-right"></i> Salir
+                    </a>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const btnLogout = document.getElementById("btnLogout");
+                            btnLogout.addEventListener("click", function (e) {
+                                e.preventDefault(); // para que no navegue al hacer click todavía
+
+                                Swal.fire({
+                                    title: '¿Cerrar sesión?',
+                                    text: "Se cerrará tu sesión actual.",
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#d33',
+                                    cancelButtonColor: '#3085d6',
+                                    confirmButtonText: 'Sí, salir',
+                                    cancelButtonText: 'Cancelar'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // redirigí a la acción Logout de tu LoginController
+                                        window.location.href = '/Login/Logout';
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+
                 </div>
+                   
             </div>
         </nav>
         <div class="container body-content">
             <asp:ContentPlaceHolder ID="MainContent" runat="server">
             </asp:ContentPlaceHolder>
             <hr />
-            <footer>
-                <p>&copy; <%: DateTime.Now.Year %> - Mi aplicación ASP.NET</p>
-            </footer>
+
         </div>
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-..." crossorigin="anonymous"></script>
+
     <asp:PlaceHolder runat="server">
-        <%: Scripts.Render("~/Scripts/bootstrap.js") %>
+        <%: Scripts.Render("~/bundles/jquery") %>
+        <%: Scripts.Render("~/bundles/bootstrap") %>
     </asp:PlaceHolder>
 </body>
 </html>
+ 
+

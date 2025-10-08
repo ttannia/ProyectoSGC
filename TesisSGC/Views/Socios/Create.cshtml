@@ -1,0 +1,52 @@
+﻿@model Socio
+
+@{
+    ViewBag.Title = "Crear Socio";
+}
+
+<h2 class="mb-4">Crear Socio</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <!-- Nombre -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.NombreSocio, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.NombreSocio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreSocio, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Cédula -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.CI, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.CI, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.CI, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Dirección -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Direccion, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Direccion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Direccion, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.TelSocio, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.TelSocio, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.TelSocio, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <input type="submit" value="Crear" class="btn btn-success" />
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+            
+            </div>
+        </div>
+}
+            @section Scripts {
+                @Scripts.Render("~/bundles/jqueryval")
+            }

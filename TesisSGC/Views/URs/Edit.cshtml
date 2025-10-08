@@ -1,0 +1,55 @@
+﻿@model TesisSGC.ViewModels.UREditViewModel
+
+@{
+    ViewBag.Title = "Editar UR";
+}
+
+<h2 class="mb-4">Editar Unidad Reajustable</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.IdUR)
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Mes, htmlAttributes: new { @class = "form-label" })
+                <input type="month" name="Mes" class="form-control" value="@Model.Mes.ToString("yyyy-MM")" />
+                @Html.ValidationMessageFor(model => model.Mes, "", new { @class = "text-danger" })
+
+                <div class="mt-2 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="setCurrentMonth()">Mes actual</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearMonth()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Monto, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Monto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Monto, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <input type="submit" value="Guardar cambios" class="btn btn-success me-2" />
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function setCurrentMonth() {
+            const today = new Date();
+            const month = today.toISOString().slice(0, 7);
+            document.querySelector('input[name="Mes"]').value = month;
+        }
+
+        function clearMonth() {
+            document.querySelector('input[name="Mes"]').value = '';
+        }
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}

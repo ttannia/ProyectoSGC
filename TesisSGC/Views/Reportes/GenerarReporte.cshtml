@@ -1,0 +1,57 @@
+﻿@model TesisSGC.ViewModels.FiltroReporteVM
+@{
+    Layout = null;
+}
+
+@{
+    var titulos = new Dictionary<string, string>
+{
+        { "Pagos", "Pagos de socios" },
+        { "Socios", "Socios" },
+        { "Cuotas", "Cuotas" },
+        { "Caja", "Caja" },
+        { "Proveedores", "Proveedores" },
+        { "PagosProv", "Pagos de proveedores" }
+    };
+
+    string titulo = titulos.ContainsKey(Model.TipoReporte) ? titulos[Model.TipoReporte] : Model.TipoReporte;
+}
+<h2>Reporte de @titulo</h2>
+
+
+<div>
+    @if (Model.TipoReporte == "Pagos")
+    {
+        var pagos = Model.DatosReporte as IEnumerable<TesisSGC.PagoSocio>;
+        @Html.Partial("_ReportePago", pagos)
+    }
+    else if (Model.TipoReporte == "Socios")
+    {
+        var socios = Model.DatosReporte as IEnumerable<Socio>;
+        @Html.Partial("_ReporteSocios", socios)
+    }
+    else if (Model.TipoReporte == "Cuotas")
+    {
+        var cuotas = Model.DatosReporte as IEnumerable<TesisSGC.CuotaMensual>;
+        @Html.Partial("_ReporteCuotas", cuotas)
+    }
+    else if (Model.TipoReporte == "Caja")
+    {
+        var cajas = Model.DatosReporte as IEnumerable<TesisSGC.Caja>;
+        @Html.Partial("_ReporteCaja", cajas)
+    }
+    else if (Model.TipoReporte == "Proveedores")
+    {
+        var proveedores = Model.DatosReporte as IEnumerable<TesisSGC.Proveedor>;
+        @Html.Partial("_ReporteProveedor", proveedores)
+    }
+    else if (Model.TipoReporte == "PagosProv")
+    {
+        var pagosProveedores = Model.DatosReporte as IEnumerable<TesisSGC.PagoProveedor>;
+        @Html.Partial("_ReportePagosProveedores", pagosProveedores)
+    }
+
+</div>
+
+
+

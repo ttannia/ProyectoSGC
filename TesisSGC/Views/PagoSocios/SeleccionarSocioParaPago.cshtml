@@ -1,0 +1,34 @@
+﻿@model IEnumerable<Socio>
+
+@{
+    ViewBag.Title = "Listado de Socios para Ingresar Pago";
+}
+
+<h2 class="mb-4">Listado de Socios para Ingresar Pago</h2>
+
+<input type="text" id="busqueda" placeholder="Buscar por nombre o CI" class="form-control" />
+<br />
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<div id="resultadoBusqueda">
+    @Html.Partial("_SociosParaPagoParcial", Model)
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#busqueda').on('input', function () {
+                var query = $(this).val();
+
+                $.get('@Url.Action("BuscarSocioParaPago", "PagoSocios")', { query: query }, function (data) {
+                    $('#resultadoBusqueda').html(data);
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,37 @@
+﻿@model IEnumerable<TesisSGC.Cuenta>
+
+@{
+    ViewBag.Title = "Listado de Cuentas";
+}
+
+<h2 class="mb-4">Listado de Cuentas</h2>
+
+<p>
+    @Html.ActionLink("Crear nueva cuenta", "Create", null, new { @class = "btn btn-success mb-3" })
+</p>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Socio</th>
+            <th>Total pendiente (pesos)</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Socio.NombreSocio</td>
+                <td>@item.TotalPendienteEnPesos.ToString("C")</td>
+                <td>
+                    <span class="badge @(item.Socio.Estado ? "bg-success" : "bg-secondary")">
+                        @(item.Socio.Estado ? "Activo" : "Inactivo")
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+

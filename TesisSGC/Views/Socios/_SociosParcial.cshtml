@@ -1,0 +1,44 @@
+﻿@model IEnumerable<Socio>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Nombre</th>
+            <th>CI</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted">No se encontraron resultados.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.NombreSocio</td>
+                    <td>@item.CI</td>
+                    <td>@item.Direccion</td>
+                    <td>@item.TelSocio</td>
+                    <td>
+                        <span class="badge @(item.Estado ? "bg-success" : "bg-secondary")">
+                            @(item.Estado ? "Activo" : "Inactivo")
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        @Html.ActionLink("Editar", "Edit", new { id = item.IdSocio }, new { @class = "btn btn-sm btn-primary" })
+                        @Html.ActionLink("Detalles", "Details", new { id = item.IdSocio }, new { @class = "btn btn-sm btn-info text-white" })
+                        @Html.ActionLink("Desactivar", "Delete", new { id = item.IdSocio }, new { @class = "btn btn-sm btn-secondary" })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

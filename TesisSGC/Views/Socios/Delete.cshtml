@@ -1,0 +1,45 @@
+﻿@model Socio
+
+@{
+    ViewBag.Title = "Eliminar Socio";
+}
+
+<h2 class="mb-4">Desactivar Socio</h2>
+
+
+<div class="alert alert-warning">
+    <h4 class="alert-heading">¿Estás seguro que deseas cambiar el estado de este socio?</h4>
+    <p>Esta acción marcará al socio como <strong>inactivo</strong> en el sistema. Podrás reactivarlo luego si es necesario.</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Nombre</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreSocio)</dd>
+
+            <dt class="col-sm-3">Cédula</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.CI)</dd>
+
+            <dt class="col-sm-3">Dirección</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Direccion)</dd>
+
+            <dt class="col-sm-3">Teléfono</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.TelSocio)</dd>
+        </dl>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="d-flex gap-2">
+        <input type="submit" value="Confirmar desactivación" class="btn btn-danger" />
+        @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-secondary" })
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

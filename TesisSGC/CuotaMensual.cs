@@ -18,9 +18,15 @@ namespace TesisSGC
 
         public DateTime Mes { get; set; }
 
+        public string Tipo { get; set; }
+
         public decimal Monto { get; set; }
 
+        public bool EstaPagada { get; set; } = false;
+
         public int IdCuenta { get; set; }
+
+        public decimal SaldoPendiente { get; set; }
 
         [ForeignKey("IdUR")]
         public virtual UR UR { get; set; }
@@ -30,5 +36,8 @@ namespace TesisSGC
 
         [ForeignKey("IdCuenta")]
         public virtual Cuenta Cuenta { get; set; }
+
+        public virtual ICollection<PagoSocio> PagoSocios { get; set; }
+
     }
 }

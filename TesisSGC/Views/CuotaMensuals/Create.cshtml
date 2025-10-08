@@ -1,0 +1,88 @@
+﻿@model TesisSGC.CuotaMensual
+
+@{
+    ViewBag.Title = "Crear Cuota Mensual";
+}
+
+<h2 class="mb-4">Crear Cuota Mensual</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+<div class="card shadow-sm mb-3">
+    <div class="card-body">
+
+        <!-- Socio -->
+        <div class="mb-3">
+            @Html.LabelFor(model => model.IdSocio, "Socio", htmlAttributes: new { @class = "form-label" })
+            @Html.DropDownList("IdSocio", null, "-- Seleccione un socio --", new { @class = "form-select" })
+            @Html.ValidationMessageFor(model => model.IdSocio, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Mes -->
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Mes, htmlAttributes: new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.Mes, "{0:yyyy-MM}", new { @class = "form-control", type = "month" })
+            @Html.ValidationMessageFor(model => model.Mes, "", new { @class = "text-danger" })
+
+            <div class="mt-2 d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="setCurrentMonth()">Mes actual</button>
+                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearMonth()">Limpiar</button>
+            </div>
+        </div>
+        <!-- Tipo de Cuota -->
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Tipo, "Tipo de Cuota", htmlAttributes: new { @class = "form-label" })
+            @Html.DropDownListFor(model => model.Tipo,
+                new SelectList(new[] {
+                    new { Value = "ingreso", Text = "Ingreso (una vez por socio)" },
+                    new { Value = "vivienda", Text = "Vivienda (una vez por mes)" },
+                    new { Value = "gastos comunes", Text = "Gastos Comunes (una vez por mes)" }
+                }, "Value", "Text"),
+                "-- Seleccione un tipo --", new { @class = "form-select" })
+            @Html.ValidationMessageFor(model => model.Tipo, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Monto -->
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Monto, htmlAttributes: new { @class = "form-label" })
+            @Html.EditorFor(model => model.Monto, new { htmlAttributes = new { @class = "form-control", step = "0.01", type = "number" } })
+            @Html.ValidationMessageFor(model => model.Monto, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Esta Pagada -->
+        <div class="mb-3">
+            @Html.LabelFor(model => model.EstaPagada, "Está Pagada", htmlAttributes: new { @class = "form-label" })
+            @Html.DropDownListFor(model => model.EstaPagada, new SelectList(new[]
+                {
+                    new { Value = "true", Text = "Sí" },
+                    new { Value = "false", Text = "No" }
+                }, "Value", "Text"), "-- Seleccione --", new { @class = "form-select" })
+            @Html.ValidationMessageFor(model => model.EstaPagada, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+            <input type="submit" value="Crear" class="btn btn-success" />
+            @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+        </div>
+    </div>
+</div>
+            }
+
+            @section Scripts {
+                <script>
+                    function setCurrentMonth() {
+                        const today = new Date();
+                        const month = today.toISOString().slice(0, 7);
+                        document.querySelector('input[name="Mes"]').value = month;
+                    }
+
+                    function clearMonth() {
+                        document.querySelector('input[name="Mes"]').value = '';
+                    }
+                </script>
+
+                @Scripts.Render("~/bundles/jqueryval")
+            }

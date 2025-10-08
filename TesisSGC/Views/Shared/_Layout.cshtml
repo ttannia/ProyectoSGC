@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        /* Fondo oscuro estilo Visual Studio para el header */
+        .navbar-custom {
+            background-color: #2d2d30;
+            border-color: #1b1b1d;
+        }
+
+            .navbar-custom .navbar-brand,
+            .navbar-custom .navbar-nav > li > a {
+                color: #f5f5f5 !important;
+            }
+
+                .navbar-custom .navbar-nav > li > a:hover,
+                .navbar-custom .navbar-brand:hover {
+                    color: #ffffff !important;
+                    background-color: #3e3e42 !important;
+                }
+
+        /* Asegura que el contenido no quede oculto detrás del navbar fijo */
+        .body-content {
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-custom navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="~/Default.aspx">Volver al inicio</a>
+
+                
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+        
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

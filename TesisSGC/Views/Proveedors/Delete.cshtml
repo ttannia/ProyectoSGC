@@ -1,0 +1,47 @@
+﻿@model TesisSGC.Proveedor
+
+@{
+    ViewBag.Title = "Eliminar Proveedor";
+}
+
+<h2 class="mb-4">Desactivar Proveedor</h2>
+
+<div class="alert alert-warning">
+    <h4 class="alert-heading">¿Estás seguro que deseas cambiar el estado de este proveedor?</h4>
+    <p>Esta acción marcará al proveedor como <strong>inactivo</strong> en el sistema. Podrás reactivarlo luego si es necesario.</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Nombre</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+
+            <dt class="col-sm-3">RUT</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.RUT)</dd>
+
+            <dt class="col-sm-3">Dirección</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Direccion)</dd>
+
+            <dt class="col-sm-3">Teléfono</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+        </dl>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="d-flex gap-2">
+        <input type="submit" value="Confirmar desactivación" class="btn btn-danger" />
+        @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-secondary" })
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

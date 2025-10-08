@@ -1,0 +1,109 @@
+﻿@model IEnumerable<TesisSGC.PagoProveedor>
+
+@{
+    Layout = null;
+    var pagos = Model != null ? Model.ToList() : new List<TesisSGC.PagoProveedor>();
+
+
+    int? mes = ViewBag.Mes as int?;
+    int? anio = ViewBag.Anio as int?;
+    int? idProveedor = ViewBag.IdProveedor as int?;
+
+    string mesTexto = (mes.HasValue && anio.HasValue) ? new DateTime(anio.Value, mes.Value, 1).ToString("MMMM yyyy") : "Todos los meses";
+
+    var pagosFiltrados = pagos
+        .Where(p => (!mes.HasValue || (p.FechaPago.Month == mes.Value && p.FechaPago.Year == anio.Value))
+                    && (!idProveedor.HasValue || p.IdProveedor == idProveedor.Value))
+        .ToList();
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Reporte de Pagos de Proveedores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .reporte {
+            border: 1px solid #000;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .mensaje {
+            text-align: center;
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="reporte">
+        <h2>Reporte de Pagos de Proveedores - @mesTexto</h2>
+
+        @if (ViewBag.NombreProveedor != null)
+        {
+            <h4>Proveedor: @ViewBag.NombreProveedor (@ViewBag.RUTProveedor)</h4>
+        }
+
+        @if (!pagosFiltrados.Any())
+        {
+            <p class="mensaje">No existen pagos registrados para los filtros seleccionados.</p>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Proveedor</th>
+                        <th>RUT</th>
+                        <th>Monto (UYU)</th>
+                        <th>Forma de pago</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in pagosFiltrados)
+                    {
+                        <tr>
+                            <td>@p.FechaPago.ToString("dd/MM/yyyy")</td>
+                            <td>@(p.Proveedor != null ? p.Proveedor.Nombre : "N/A")</td>
+                            <td>@(p.Proveedor != null ? p.Proveedor.RUT.ToString() : "N/A")</td>
+                            <td>@p.Monto.ToString("N2")</td>
+                            <td>@p.FormaPago</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</body>
+</html>

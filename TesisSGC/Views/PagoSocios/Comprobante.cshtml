@@ -1,0 +1,136 @@
+﻿@model TesisSGC.Comprobante
+@using System.Globalization
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Comprobante de Pago</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .comprobante {
+            border-top: 1px solid #000;
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            border-left: 1px solid #000;
+            padding: 20px;
+            max-width: 700px;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .section {
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 5px;
+            vertical-align: top;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="comprobante">
+        <h2>Comprobante de Pago</h2>
+
+        <div class="section">
+            <table>
+                <tr>
+                    <td class="bold">Nro. Comprobante:</td>
+                    <td>@Model.NumeroComprobante</td>
+                </tr>
+                <tr>
+                    <td class="bold">Fecha de emisión:</td>
+                    <td>@Model.FechaEmision.ToString("dd/MM/yyyy")</td>
+                </tr>
+                <tr>
+                    <td class="bold">Socio:</td>
+                    <td>@Model.PagoSocio.Socio.NombreSocio (C.I. @Model.PagoSocio.Socio.CI)</td>
+                </tr>
+                <tr>
+                    <td class="bold">Fecha de pago:</td>
+                    <td>@Model.PagoSocio.FechaPago.ToString("dd/MM/yyyy")</td>
+                </tr>
+                <tr>
+                    <td class="bold">Tipo de cuota:</td>
+                    <td>@Model.PagoSocio.CuotaMensual.Tipo - @Model.PagoSocio.CuotaMensual.Mes.ToString("MMMM yyyy", new CultureInfo("es-ES"))</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section">
+            <table>
+                <tr>
+                    <td class="bold">Monto (UYU):</td>
+                    <td>@Model.PagoSocio.Monto.ToString("N2")</td>
+                </tr>
+                <tr>
+                    <td class="bold">Monto (UR):</td>
+                    <td>@Model.PagoSocio.MontoUR.ToString("N2")</td>
+                </tr>
+                <tr>
+                    <td class="bold">Forma de pago:</td>
+                    <td>@Model.PagoSocio.FormaPago</td>
+                </tr>
+                <tr>
+                    <td class="bold">Tipo de pago:</td>
+                    <td>@Model.PagoSocio.TipoPago</td>
+                </tr>
+                @if (Model.PagoSocio.FormaPago == "Transferencia" && !string.IsNullOrEmpty(Model.PagoSocio.NumeroTransferencia))
+                {
+                    <tr>
+                        <td class="bold">Nro. Transferencia:</td>
+                        <td>@Model.PagoSocio.NumeroTransferencia</td>
+                    </tr>
+                }
+                else if (Model.PagoSocio.FormaPago == "Cheque" && !string.IsNullOrEmpty(Model.PagoSocio.NumeroCheque))
+                {
+                    <tr>
+                        <td class="bold">Nro. Cheque:</td>
+                        <td>@Model.PagoSocio.NumeroCheque</td>
+                    </tr>
+                }
+                else if (Model.PagoSocio.FormaPago == "Débito" && !string.IsNullOrEmpty(Model.PagoSocio.NumeroTransaccion))
+                {
+                    <tr>
+                        <td class="bold">Nro. Transacción:</td>
+                        <td>@Model.PagoSocio.NumeroTransaccion</td>
+                    </tr>
+                }
+            </table>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.PagoSocio.Observaciones))
+        {
+            <div class="section">
+                <b>Observaciones:</b> @Model.PagoSocio.Observaciones
+            </div>
+        }
+
+        <div class="section" style="text-align:center; margin-top:30px;">
+            <small>Este comprobante no tiene validez fiscal</small>
+        </div>
+    </div>
+</body>
+</html>
+
+

@@ -1,0 +1,82 @@
+﻿@model TesisSGC.PagoSocio
+
+
+@{
+    ViewBag.Title = "Detalles del Pago";
+}
+
+<h2>Detalles del Pago</h2>
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<div class="card p-4 shadow-sm">
+    <dl class="row">
+        <dt class="col-sm-3">Tipo de Cuota</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(m => m.CuotaMensual.Tipo)</dd>
+
+        <dt class="col-sm-3">Socio</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(m => m.Socio.NombreSocio)</dd>
+
+        <dt class="col-sm-3">Fecha de Pago</dt>
+        <dd class="col-sm-9">@Model.FechaPago.ToString("dd/MM/yyyy")</dd>
+
+        <dt class="col-sm-3">Monto</dt>
+        <dd class="col-sm-9">$ @Html.DisplayFor(m => m.Monto)</dd>
+
+        <dt class="col-sm-3">Forma de Pago</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(m => m.FormaPago)</dd>
+
+        <dt class="col-sm-3">Tipo de Pago</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(m => m.TipoPago)</dd>
+
+        @* Mostrar condicionalmente según la forma de pago *@
+        @if (Model.FormaPago == "Transferencia")
+        {
+            <dt class="col-sm-3">Número de Transferencia</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(m => m.NumeroTransferencia)</dd>
+        }
+        else if (Model.FormaPago == "Cheque")
+        {
+            <dt class="col-sm-3">Número de Cheque</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(m => m.NumeroCheque)</dd>
+        }
+        else if (Model.FormaPago == "Débito")
+        {
+            <dt class="col-sm-3">Número de Transacción</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(m => m.NumeroTransaccion)</dd>
+        }
+
+        <dt class="col-sm-3">Observaciones</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(m => m.Observaciones)</dd>
+    </dl>
+</div>
+
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.IdPagoSocio }, new { @class = "btn btn-primary" })
+    @{
+        var returnUrl = Request.QueryString["returnUrl"];
+    }
+
+    @if (!string.IsNullOrEmpty(returnUrl))
+    {
+        <a href="@returnUrl" class="btn btn-secondary">Volver</a>
+    }
+    else
+    {
+        @Html.ActionLink("Volver a la lista", "Index", null, new { @class = "btn btn-secondary" })
+    }
+    @if (ViewBag.ComprobanteId != null)
+    {
+        @Html.ActionLink(
+            "Descargar comprobante",
+            "Comprobante",
+            new { id = ViewBag.ComprobanteId },
+            new { @class = "btn btn-primary" }
+        )
+    }
+</p>

@@ -11,9 +11,11 @@ public class Usuario
     public int IdUsuario { get; set; }
 
     [Required]
+    [StringLength(100)]
     public string NombreUsuario { get; set; }
 
     [Required]
+    [StringLength(255)]
     public string Contrasena { get; set; }
 
     [Required]
@@ -21,5 +23,12 @@ public class Usuario
 
     public string Email { get; set; }
 
-    // Usuario NO tiene navegación a Socio porque la relación es opcional desde Socio
+    // FK opcional
+    public int ? IdSocio { get; set; }
+
+    [ForeignKey("IdSocio")]
+    public Socio Socio { get; set; }
 }
+
+
+

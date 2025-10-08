@@ -1,0 +1,139 @@
+﻿@model TesisSGC.PagoProveedor
+@{
+    ViewBag.Title = "Registrar Pago Proveedor";
+}
+
+<h2 class="mb-4">Registrar Pago</h2>
+
+@using (Html.BeginForm("Create", "PagoProveedors", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+
+            <div class="alert" style="background-color: #d4edda; color: #155724;">
+                <label>Proveedor:</label>
+                <strong>@ViewBag.NombreProveedor</strong> (RUT: @ViewBag.RUTProveedor)
+                @Html.HiddenFor(m => m.IdProveedor)
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Monto en pesos:</label>
+                @Html.TextBoxFor(m => m.Monto, new { @class = "form-control", type = "number", step = "0.01", min = "0.01", required = "required", id = "Monto" })
+                @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Observaciones:</label>
+                @Html.TextAreaFor(m => m.Observaciones, new { @class = "form-control", rows = "3" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Forma de pago:</label>
+                @Html.DropDownListFor(m => m.FormaPago,
+                      new SelectList(new[]
+                      {
+                          new { Value = "Transferencia", Text = "Transferencia" },
+                          new { Value = "Efectivo", Text = "Efectivo" },
+                          new { Value = "Débito", Text = "Débito" },
+                          new { Value = "Cheque", Text = "Cheque" }
+                      }, "Value", "Text"),
+                      "Seleccione forma de pago",
+                      new { @class = "form-control", required = "required", id = "FormaPago" })
+            </div>
+
+            @Html.Hidden("TipoPago", "Corriente")
+
+            <!-- Campos condicionales -->
+            <div class="form-group mb-3" style="display:none;" id="numeroTransferenciaDiv">
+                <label>Número de transferencia:</label>
+                @Html.TextBoxFor(m => m.NumeroTransferencia, new { type = "number", @class = "form-control", min = "0" })
+                @Html.ValidationMessageFor(m => m.NumeroTransferencia, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3" style="display:none;" id="numeroChequeDiv">
+                <label>Número de cheque:</label>
+                @Html.TextBoxFor(m => m.NumeroCheque, new { type = "number", @class = "form-control", min = "0" })
+                @Html.ValidationMessageFor(m => m.NumeroCheque, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3" style="display:none;" id="numeroTransaccionDiv">
+                <label>Número de transacción:</label>
+                @Html.TextBoxFor(m => m.NumeroTransaccion, new { type = "number", @class = "form-control", min = "0" })
+                @Html.ValidationMessageFor(m => m.NumeroTransaccion, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                <label>Fecha de pago:</label>
+                @Html.TextBoxFor(m => m.FechaPago, new { @class = "form-control", type = "date", required = "required", id = "fechaPagoInput" })
+                <div class="mt-2 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="setTodayDate()">Hoy</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearDate()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success">Guardar pago</button>
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function mostrarDivSegunError() {
+                // Mostrar div si hay error en ese campo
+                if ($('#NumeroTransferencia').length && $('#NumeroTransferencia').siblings('.text-danger').text().trim() !== '') {
+                    $('#numeroTransferenciaDiv').show();
+                }
+                if ($('#NumeroCheque').length && $('#NumeroCheque').siblings('.text-danger').text().trim() !== '') {
+                    $('#numeroChequeDiv').show();
+                }
+                if ($('#NumeroTransaccion').length && $('#NumeroTransaccion').siblings('.text-danger').text().trim() !== '') {
+                    $('#numeroTransaccionDiv').show();
+                }
+            }
+
+            // Ejecutar al cargar
+            mostrarDivSegunError();
+
+            // También mantener la lógica normal de FormaPago
+            $('#FormaPago').change(function () {
+                var seleccion = $(this).val();
+                if (seleccion === "Transferencia") {
+                    $('#numeroTransferenciaDiv').show();
+                    $('#numeroChequeDiv').hide();
+                    $('#numeroTransaccionDiv').hide();
+                } else if (seleccion === "Cheque") {
+                    $('#numeroChequeDiv').show();
+                    $('#numeroTransferenciaDiv').hide();
+                    $('#numeroTransaccionDiv').hide();
+                } else if (seleccion === "Débito") {
+                    $('#numeroTransaccionDiv').show();
+                    $('#numeroTransferenciaDiv').hide();
+                    $('#numeroChequeDiv').hide();
+                } else {
+                    $('#numeroTransferenciaDiv').hide();
+                    $('#numeroChequeDiv').hide();
+                    $('#numeroTransaccionDiv').hide();
+                }
+            });
+        });
+
+        function setTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayFormatted = `${year}-${month}-${day}`;
+            document.getElementById('fechaPagoInput').value = todayFormatted;
+        }
+
+        function clearDate() {
+            document.getElementById('fechaPagoInput').value = '';
+        }
+    </script>
+}

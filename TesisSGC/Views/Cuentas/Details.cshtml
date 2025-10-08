@@ -1,0 +1,25 @@
+﻿@model TesisSGC.Cuenta
+
+@{
+    ViewBag.Title = "Detalles de Cuenta";
+}
+
+<h2>Detalles de Cuenta</h2>
+
+<div>
+    <h4>Cuenta vinculada a socio</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>Socio</dt>
+        <dd>@Model.Socio?.NombreSocio</dd>
+        
+
+        <dt>Total pendiente (en pesos)</dt>
+        <dd>@Model.TotalPendienteEnPesos.ToString("C")</dd>
+    </dl>
+</div>
+
+<p>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.IdCuenta }, new { @class = "btn btn-primary" }) |
+    @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-default" })
+</p>

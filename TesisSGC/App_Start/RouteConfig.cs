@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.FriendlyUrls;
 
@@ -13,6 +14,16 @@ namespace TesisSGC
             var settings = new FriendlyUrlSettings();
             settings.AutoRedirectMode = RedirectMode.Permanent;
             routes.EnableFriendlyUrls(settings);
+
+            routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+            // Ruta por defecto de MVC
+            routes.MapRoute(
+            name: "Default",
+            url: "{controller}/{action}/{id}",
+            defaults: new { controller = "Login", action = "Login", id = UrlParameter.Optional }
+        );
+
         }
     }
 }

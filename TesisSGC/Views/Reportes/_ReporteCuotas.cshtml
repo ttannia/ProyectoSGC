@@ -1,0 +1,125 @@
+﻿@model IEnumerable<TesisSGC.CuotaMensual>
+
+@{
+    Layout = null;
+
+    var cuotas = Model != null ? Model.ToList() : new List<TesisSGC.CuotaMensual>();
+
+    int? mes = ViewBag.Mes as int?;
+    int? anio = ViewBag.Anio as int?;
+    int? idSocio = ViewBag.IdSocio as int?;
+    string mesTexto = (mes.HasValue && anio.HasValue) ? new DateTime(anio.Value, mes.Value, 1).ToString("MMMM yyyy") : "Todos los meses";
+
+    var cuotasFiltradas = cuotas
+        .Where(c => (!mes.HasValue || (c.Mes.Month == mes.Value && c.Mes.Year == anio.Value))
+                    && (!idSocio.HasValue || c.IdSocio == idSocio.Value))
+        .ToList();
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Reporte de Cuotas Mensuales</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+
+        .reporte {
+            border: 1px solid #000;
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .mensaje {
+            text-align: center;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        .total {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="reporte">
+        <h2>Reporte de Cuotas Mensuales - @mesTexto</h2>
+
+        @if (ViewBag.NombreSocio != null)
+        {
+            <h4>Socio: @ViewBag.NombreSocio (@ViewBag.CI)</h4>
+        }
+
+        @if (!cuotas.Any())
+        {
+            <p class="mensaje">No existen cuotas registradas.</p>
+        }
+        else if (idSocio.HasValue && !cuotasFiltradas.Any())
+        {
+            <p class="mensaje">No se registraron cuotas para este socio en el mes seleccionado (@mesTexto).</p>
+        }
+        else if (!idSocio.HasValue && !cuotasFiltradas.Any())
+        {
+            <p class="mensaje">No se registraron cuotas en el mes seleccionado (@mesTexto).</p>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mes</th>
+                        <th>Socio</th>
+                        <th>CI</th>
+                        <th>Tipo</th>
+                        <th>Monto (UYU)</th>
+                        <th>Saldo Pendiente (UYU)</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in cuotasFiltradas)
+                    {
+                        <tr>
+                            <td>@c.Mes.ToString("MMMM yyyy")</td>
+                            <td>@c.Socio.NombreSocio</td>
+                            <td>@c.Socio.CI</td>
+                            <td>@c.Tipo</td>
+                            <td>@c.Monto.ToString("N2")</td>
+                            <td>@c.SaldoPendiente.ToString("N2")</td>
+                            <td>@(c.EstaPagada ? "Pagada" : "Pendiente")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+    </div>
+</body>
+</html>

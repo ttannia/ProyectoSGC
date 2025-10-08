@@ -1,0 +1,33 @@
+﻿@model IEnumerable<TesisSGC.Proveedor>
+
+@{
+    ViewBag.Title = "Listado de Proveedores";
+}
+
+<h2 class="mb-4">Listado de Proveedores</h2>
+
+<input type="text" id="busqueda" placeholder="Buscar por nombre o RUT" class="form-control" />
+<br />
+
+<p>
+    @Html.ActionLink("Crear nuevo proveedor", "Create", null, new { @class = "btn btn-success mb-3" })
+</p>
+
+<div id="resultadoBusqueda">
+    @Html.Partial("_ProveedoresParcial", Model) <!-- tabla cargada inicialmente -->
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#busqueda').on('input', function () {
+                var query = $(this).val();
+
+                $.get('@Url.Action("Buscar", "Proveedors")', { query: query }, function (data) {
+                    $('#resultadoBusqueda').html(data);
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Usuario>
+
+<table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Socio vinculado</th>
+            <th>Usuario</th>
+            <th>Rol</th>
+            <th>Email</th>
+            <th class="text-center">Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center text-muted">No se encontraron resultados.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(item.Socio != null ? item.Socio.NombreSocio : "")</td>
+                    <td>@item.NombreUsuario</td>
+                    <td>@item.Rol</td>
+                    <td>@item.Email</td>
+                    <td class="text-center">
+                        <div class="text-center">
+                            @Html.ActionLink("Editar", "Edit", new { id = item.IdUsuario }, new { @class = "btn btn-sm btn-primary" })
+                            @Html.ActionLink("Eliminar", "Delete", new { id = item.IdUsuario }, new { @class = "btn btn-sm btn-secondary" })
+                        </div>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

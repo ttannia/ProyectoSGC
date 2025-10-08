@@ -1,0 +1,59 @@
+﻿@model TesisSGC.Proveedor
+
+@{
+    ViewBag.Title = "Crear Proveedor";
+}
+
+<h2 class="mb-4">Crear Proveedor</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <!-- Nombre -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Nombre, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Nombre, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Nombre, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- RUT -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.RUT, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.RUT, new { htmlAttributes = new { @class = "form-control", type = "number", min = "10000000", max = "999999999999" } })
+                @Html.ValidationMessageFor(model => model.RUT, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Dirección -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Direccion, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Direccion, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Direccion, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Teléfono -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Telefono, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Telefono, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.Telefono, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", type = "email" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <input type="submit" value="Crear" class="btn btn-success" />
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

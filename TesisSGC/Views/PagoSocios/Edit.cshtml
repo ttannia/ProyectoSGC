@@ -1,0 +1,191 @@
+﻿@model TesisSGC.ViewModels.PagoSocioEditViewModel
+@using System.Globalization
+
+@{
+    ViewBag.Title = "Editar Pago";
+    var valorUR = ViewBag.ValorUR != null ? (decimal)ViewBag.ValorUR : 1m;
+    var saldoPendienteUR = ViewBag.SaldoPendienteURSinEste != null ? (decimal)ViewBag.SaldoPendienteURSinEste : 0m;
+
+    // ✅ CORRECCIÓN: Parsear el Monto string de forma segura
+    decimal montoDecimal = 0m;
+    if (!string.IsNullOrEmpty(Model.Monto))
+    {
+        decimal.TryParse(Model.Monto.Replace(',', '.'), NumberStyles.Any, CultureInfo.InvariantCulture, out montoDecimal);
+    }
+}
+
+<h2 class="mb-4">Editar Pago</h2>
+
+@using (Html.BeginForm("Edit", "PagoSocios", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+
+            @Html.HiddenFor(m => m.IdPagoSocio)
+            @Html.HiddenFor(m => m.IdSocio)
+            @Html.HiddenFor(m => m.IdCuotaMensual)
+
+            <div class="alert" style="background-color: #d4edda; color: #155724;">
+                <label>Socio:</label> <strong>@ViewBag.NombreSocio</strong> (CI: @ViewBag.CI)
+            </div>
+
+            <div class="form-group mt-3">
+                <strong>Cuota:</strong>
+                @Model.MesCuota.ToString("MMMM yyyy", new System.Globalization.CultureInfo("es-ES"))
+                (@Model.TipoCuota)
+            </div>
+
+            <div id="infoCuota" style="margin-top:10px; font-weight:bold;">
+                Monto de la cuota: @Model.MontoCuota.ToString("0.##") UR |
+                $@( (Model.MontoCuota * Model.ValorUR).ToString("0.##") )
+            </div>
+
+            <div id="SaldoPendiente" style="margin-top:10px; font-weight:bold;">
+                Saldo pendiente: @saldoPendienteUR.ToString("0.##") UR |
+                $@( (saldoPendienteUR * valorUR).ToString("0.##") )
+            </div>
+
+            <!-- Campo Monto en pesos -->
+            <div class="form-group mt-3">
+                @Html.LabelFor(m => m.Monto, "Monto en pesos")
+                @Html.TextBoxFor(m => m.Monto, new { @class = "form-control", type = "text", id = "Monto" })
+                @Html.ValidationMessageFor(m => m.Monto, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Campo Monto en UR (readonly) -->
+            <div class="form-group mt-3">
+                <label>Monto en UR</label>
+                <input type="text" id="MontoUR" class="form-control" readonly="readonly"
+                       value="@(montoDecimal > 0 && valorUR > 0 ? Math.Round(montoDecimal / valorUR, 2).ToString("0.##") : "")" />
+            </div>
+
+            <!-- Tipo de pago (solo lectura, calculado según cuota.Tipo) -->
+            <div class="form-group mt-3" id="tipoPagoDiv">
+                @Html.LabelFor(m => m.TipoPago)
+                @Html.TextBoxFor(m => m.TipoPago, new { @readonly = "readonly", @class = "form-control", id = "TipoPago" })
+            </div>
+
+            <div class="form-group mt-3">
+                @Html.LabelFor(m => m.FormaPago)
+                @Html.DropDownListFor(m => m.FormaPago,
+                      new SelectList(new[]
+                      {
+                          new { Value = "Transferencia", Text = "Transferencia" },
+                          new { Value = "Efectivo", Text = "Efectivo" },
+                          new { Value = "Débito", Text = "Débito" },
+                          new { Value = "Cheque", Text = "Cheque" }
+                      }, "Value", "Text", Model.FormaPago),
+                      "Seleccione forma de pago",
+                      new { @class = "form-control", required = "required", id = "FormaPago" })
+            </div>
+
+            <div class="form-group mt-3" style="display:none;" id="numeroTransferenciaDiv">
+                @Html.LabelFor(m => m.NumeroTransferencia)
+                @Html.TextBoxFor(m => m.NumeroTransferencia, new { type = "number", @class = "form-control", min = "0" })
+            </div>
+
+            <div class="form-group mt-3" style="display:none;" id="numeroChequeDiv">
+                @Html.LabelFor(m => m.NumeroCheque)
+                @Html.TextBoxFor(m => m.NumeroCheque, new { type = "number", @class = "form-control", min = "0" })
+            </div>
+
+            <div class="form-group mt-3" style="display:none;" id="numeroTransaccionDiv">
+                @Html.LabelFor(m => m.NumeroTransaccion)
+                @Html.TextBoxFor(m => m.NumeroTransaccion, new { type = "number", @class = "form-control", min = "0" })
+            </div>
+
+            <div id="validationSummaryConditional" class="text-danger">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    var camposCondicionales = new[] { "NumeroTransferencia", "NumeroCheque", "NumeroTransaccion" };
+                    foreach (var campo in camposCondicionales)
+                    {
+                        if (ViewData.ModelState[campo] != null && ViewData.ModelState[campo].Errors.Count > 0)
+                        {
+                            foreach (var error in ViewData.ModelState[campo].Errors)
+                            {
+                                <div>@error.ErrorMessage</div>
+                            }
+                        }
+                    }
+                }
+            </div>
+
+            <div class="form-group mt-3">
+                @Html.LabelFor(m => m.FechaPago)
+                @Html.TextBoxFor(m => m.FechaPago, "{0:yyyy-MM-dd}", new
+                {
+                    @class = "form-control",
+                    type = "date",
+                    required = "required",
+                    id = "fechaPagoInput"
+                })
+                <div class="mt-2 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="setTodayDate()">Fecha de hoy</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearDate()">Limpiar</button>
+                </div>
+            </div>
+
+            <div class="form-group mt-3">
+                @Html.LabelFor(m => m.Observaciones)
+                @Html.TextAreaFor(m => m.Observaciones, new { @class = "form-control", rows = "3" })
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-success">Guardar cambios</button>
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var valorURdelMes = parseFloat("@valorUR");
+
+            // Al modificar el monto en pesos recalcular en UR
+            $('#Monto').on('input', function () {
+                var montoPesos = parseFloat($(this).val().replace(',', '.')) || 0;
+                if (valorURdelMes > 0 && montoPesos > 0) {
+                    $('#MontoUR').val((montoPesos / valorURdelMes).toFixed(2));
+                } else {
+                    $('#MontoUR').val('');
+                }
+            });
+
+            // Mostrar/ocultar campos según FormaPago
+            function toggleCamposPago() {
+                var seleccion = $('#FormaPago').val();
+                $('#numeroTransferenciaDiv').hide();
+                $('#numeroChequeDiv').hide();
+                $('#numeroTransaccionDiv').hide();
+                if (seleccion === "Transferencia") {
+                    $('#numeroTransferenciaDiv').show();
+                } else if (seleccion === "Cheque") {
+                    $('#numeroChequeDiv').show();
+                } else if (seleccion === "Débito") {
+                    $('#numeroTransaccionDiv').show();
+                }
+            }
+            $('#FormaPago').change(toggleCamposPago);
+            toggleCamposPago(); // ejecutar al cargar
+
+            // Fecha hoy y limpiar
+            window.setTodayDate = function () {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                document.getElementById('fechaPagoInput').value = `${year}-${month}-${day}`;
+            }
+
+            window.clearDate = function () {
+                document.getElementById('fechaPagoInput').value = '';
+            }
+        });
+    </script>
+}

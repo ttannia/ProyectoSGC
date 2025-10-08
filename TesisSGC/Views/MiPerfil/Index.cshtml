@@ -1,0 +1,162 @@
+﻿@model Socio
+
+@{
+    ViewBag.Title = "Mi Cuenta";
+}
+
+<h2 class="mb-4">Mi Cuenta</h2>
+
+<div class="mb-4">
+    <h4>Información Personal</h4>
+    <table class="table table-bordered w-auto">
+        <tbody>
+            <tr>
+                <th>Nombre</th>
+                <td>@Model.NombreSocio</td>
+            </tr>
+            <tr>
+                <th>CI</th>
+                <td>@Model.CI</td>
+            </tr>
+            <tr>
+                <th>Dirección</th>
+                <td>@Model.Direccion</td>
+            </tr>
+            <tr>
+                <th>Teléfono</th>
+                <td>@Model.TelSocio</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>
+                    <span class="badge @(Model.Estado ? "bg-success" : "bg-secondary")">
+                        @(Model.Estado ? "Activo" : "Inactivo")
+                    </span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="mb-4">
+    <h4>Información Financiera</h4>
+
+    @if (Model.Cuenta != null)
+    {
+        <table class="table table-bordered w-auto">
+            <tbody>
+                <tr>
+                    <th>Total Pendiente</th>
+                    <td>@(Model.Cuenta.TotalPendienteEnPesos.ToString("C"))</td>
+                </tr>
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay información de cuenta registrada.</p>
+    }
+
+    <h5>Cuotas Mensuales</h5>
+    @if (Model.Cuenta != null && Model.Cuenta.CuotasMensuales != null && Model.Cuenta.CuotasMensuales.Any())
+    {
+        var impagas = Model.Cuenta.CuotasMensuales.Where(c => !c.EstaPagada).OrderByDescending(c => c.Mes).ToList();
+        var pagadas = Model.Cuenta.CuotasMensuales.Where(c => c.EstaPagada).OrderByDescending(c => c.Mes).ToList();
+
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Mes</th>
+                    <th>Tipo</th>
+                    <th>Monto</th>
+                    <th>Pagada</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cuota in impagas)
+                {
+                    <tr>
+                        <td>@cuota.Mes.ToString("MMMM yyyy")</td>
+                        <td>@cuota.Tipo</td>
+                        <td>@cuota.Monto.ToString("C")</td>
+                        <td><span class="badge bg-danger">No</span></td>
+                    </tr>
+                }
+
+                @foreach (var cuota in pagadas)
+                {
+                    <tr>
+                        <td>@cuota.Mes.ToString("MMMM yyyy")</td>
+                        <td>@cuota.Tipo</td>
+                        <td>@cuota.Monto.ToString("C")</td>
+                        <td><span class="badge bg-success">Sí</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No hay cuotas registradas.</p>
+    }
+
+    <div class="mb-4">
+        <h5>Pagos Realizados</h5>
+        @if (ViewBag.PagosSocio != null && ((List<TesisSGC.PagoSocio>)ViewBag.PagosSocio).Any())
+        {
+            var pagos = (List<TesisSGC.PagoSocio>)ViewBag.PagosSocio;
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Monto en UR</th>
+                        <th>Forma de Pago</th>
+                        <th>Tipo de Pago</th>
+                        <th>Cuota</th>
+                        <th>Observaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pago in pagos)
+                    {
+                        <tr>
+                            <td>@pago.FechaPago.ToString("dd/MM/yyyy")</td>
+                            <td>@pago.Monto.ToString("C")</td>
+                            <td>@pago.MontoUR.ToString("N2")</td>
+                            <td>@pago.FormaPago</td>
+                            <td>@pago.TipoPago</td>
+                            <td>
+                                @(pago.CuotaMensual != null
+                ? pago.CuotaMensual.Mes.ToString("MMMM yyyy") + " (" + pago.CuotaMensual.Tipo + ")"
+                : "N/A")
+                            </td>
+                            <td>@pago.Observaciones</td>
+                            <td>
+                                @{
+                                    var comprobante = ((List<TesisSGC.Comprobante>)ViewBag.Comprobantes)
+                                                                   .FirstOrDefault(c => c.IdPagoSocio == pago.IdPagoSocio);
+                                }
+                                @if (comprobante != null)
+                                {
+                                    <a href="@Url.Action("Comprobante", "PagoSocios", new { id = comprobante.IdComprobante })"
+                                       class="btn btn-sm btn-primary" target="_blank">
+                                        Ver Comprobante
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Sin comprobante</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No hay pagos registrados.</p>
+        }
+    </div>

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<TesisSGC.Proveedor>
+
+@{
+    ViewBag.Title = "Listado de Proveedores para Ingresar Pago";
+}
+
+<h2 class="mb-4">Listado de Proveedores para Ingresar Pago</h2>
+
+<input type="text" id="busquedaProveedor" placeholder="Buscar por nombre, RUC o dirección" class="form-control" />
+<br />
+
+<div id="resultadoBusqueda">
+    @Html.Partial("_ProveedoresParaPagoParcial", Model)
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#busquedaProveedor').on('input', function () {
+                var query = $(this).val();
+
+                $.get('@Url.Action("BuscarProveedorParaPago", "PagoProveedors")', { query: query }, function (data) {
+                    $('#resultadoBusqueda').html(data);
+                });
+            });
+        });
+    </script>
+}

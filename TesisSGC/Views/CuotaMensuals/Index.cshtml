@@ -1,0 +1,33 @@
+﻿@model IEnumerable<CuotaMensual>
+
+@{
+    ViewBag.Title = "Cuotas Mensuales";
+}
+
+<h2 class="mb-4">Cuotas Mensuales</h2>
+
+<input type="text" id="busquedaCuotas" placeholder="Buscar por nombre, CI o tipo de cuota" class="form-control" />
+<br />
+
+<p>
+    @Html.ActionLink("Crear nueva cuota", "Create", null, new { @class = "btn btn-success mb-3" })
+</p>
+
+<div id="resultadoBusquedaCuotas">
+    @Html.Partial("_CuotasParcial", Model) <!-- se carga el parcial con la tabla -->
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#busquedaCuotas').on('input', function () {
+                var query = $(this).val();
+
+                $.get('@Url.Action("BuscarCuotas", "CuotaMensuals")', { query: query }, function (data) {
+                $('#resultadoBusquedaCuotas').html(data);
+                });
+            });
+        });
+    </script>
+}

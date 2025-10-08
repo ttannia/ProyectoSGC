@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Socio>
+
+@{
+    ViewBag.Title = "Listado de Socios";
+}
+
+<h2 class="mb-4">Listado de Socios</h2>
+
+<input type="text" id="busqueda" placeholder="Buscar por nombre o CI" class="form-control" />
+<br />
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<p>
+    @Html.ActionLink("Crear nuevo socio", "Create", null, new { @class = "btn btn-success mb-3" })
+</p>
+
+<div id="resultadoBusqueda">
+    @Html.Partial("_SociosParcial", Model) <!-- solo se carga la tabla acá -->
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#busqueda').on('input', function () {
+                var query = $(this).val();
+
+                $.get('@Url.Action("Buscar", "Socios")', { query: query }, function (data) {
+                    $('#resultadoBusqueda').html(data);
+                });
+            });
+        });
+    </script>
+}

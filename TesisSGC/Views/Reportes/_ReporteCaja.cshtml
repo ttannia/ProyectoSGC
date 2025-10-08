@@ -1,0 +1,147 @@
+﻿@model IEnumerable<TesisSGC.Caja>
+
+@{
+    Layout = null;
+
+    var cajas = Model != null ? Model.ToList() : new List<TesisSGC.Caja>();
+
+    string mesTexto = "Todos los meses";
+    if (ViewBag.Mes != null && ViewBag.Anio != null)
+    {
+        var mes = (int)ViewBag.Mes;
+        var anio = (int)ViewBag.Anio;
+        mesTexto = new DateTime(anio, mes, 1).ToString("MMMM yyyy");
+    }
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        .reporte {
+            border: 1px solid #000;
+            padding: 20px;
+            max-width: 950px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h3 {
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .mensaje {
+            text-align: center;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .total {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="reporte">
+        <h2>Reporte de Caja - @mesTexto</h2>
+
+        @if (!cajas.Any())
+        {
+            <p class="mensaje">No existen registros de caja.</p>
+        }
+        else
+        {
+            foreach (var caja in cajas)
+            {
+                var movimientosFiltrados = caja.Movimientos
+                    .Where(m => ViewBag.Mes == null ||
+                                (m.Fecha.Month == (int)ViewBag.Mes && m.Fecha.Year == (int)ViewBag.Anio))
+                    .OrderBy(m => m.Fecha)
+                    .ToList();
+
+                <h3>Caja - Apertura: @caja.FechaApertura.ToString("dd/MM/yyyy")</h3>
+                <p>
+                    <strong>Saldo Inicial:</strong> @caja.SaldoInicial.ToString("N2") UYU |
+                    <strong>Saldo Efectivo:</strong> @caja.SaldoEfectivo.ToString("N2") UYU |
+                    <strong>Saldo Banco:</strong> @caja.SaldoBanco.ToString("N2") UYU
+                </p>
+
+                if (!movimientosFiltrados.Any())
+                {
+                    <p class="mensaje">No se registraron movimientos en este período.</p>
+                }
+                else
+                {
+                    var totalIngresos = movimientosFiltrados.Where(m => m.EsEntrada).Sum(m => m.Monto);
+                    var totalEgresos = movimientosFiltrados.Where(m => !m.EsEntrada).Sum(m => m.Monto);
+                    var saldoFinal = caja.SaldoInicial + totalIngresos - totalEgresos;
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Medio</th>
+                                <th>Tipo</th>
+                                <th>Monto (UYU)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var mov in movimientosFiltrados)
+                            {
+                                <tr>
+                                    <td>@mov.Fecha.ToString("dd/MM/yyyy")</td>
+                                    <td>@mov.Descripcion</td>
+                                    <td>@mov.Medio</td>
+                                    <td>@(mov.EsEntrada ? "Ingreso" : "Egreso")</td>
+                                    <td>@mov.Monto.ToString("N2")</td>
+                                </tr>
+                            }
+                            <tr class="total">
+                                <td colspan="4">Total Ingresos</td>
+                                <td>@totalIngresos.ToString("N2")</td>
+                            </tr>
+                            <tr class="total">
+                                <td colspan="4">Total Egresos</td>
+                                <td>@totalEgresos.ToString("N2")</td>
+                            </tr>
+                            <tr class="total">
+                                <td colspan="4">Saldo Final</td>
+                                <td>@saldoFinal.ToString("N2")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+        }
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "Descargando comprobante...";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Descargando comprobante...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 0;
+            color: #555;
+        }
+
+        /* Loader circular */
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem auto;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loader"></div>
+        <h3>Descargando comprobante...</h3>
+        <p>Espere un momento, será redirigido al listado de pagos de proveedores.</p>
+    </div>
+
+    <script>
+    window.onload = function () {
+        var comprobanteId = '@ViewBag.ComprobanteId';
+        // Crear enlace invisible para forzar descarga
+        var link = document.createElement('a');
+        link.href = '@Url.Action("Comprobante", "PagoProveedors")?id=' + comprobanteId;
+        link.download = 'ComprobanteProveedor.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Redirigir al listado después de 2 segundos
+        setTimeout(function () {
+            window.location.href = '@Url.Action("Index", "PagoProveedors")';
+        }, 2000);
+    };
+    </script>
+</body>
+</html>

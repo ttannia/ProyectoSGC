@@ -1,0 +1,51 @@
+﻿@model TesisSGC.PagoProveedor
+
+@{
+    ViewBag.Title = "Eliminar Pago Proveedor";
+}
+
+<h2 class="mb-4">Eliminar Pago</h2>
+
+<div class="alert alert-danger">
+    <h4 class="alert-heading">¿Estás seguro que deseas eliminar este pago?</h4>
+    <p>Esta acción eliminará permanentemente el registro del pago. No podrá ser recuperado.</p>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Proveedor</dt>
+            <dd class="col-sm-9">@Model.Proveedor.Nombre (RUT: @Model.Proveedor.RUT)</dd>
+
+            <dt class="col-sm-3">Fecha de Pago</dt>
+            <dd class="col-sm-9">@Model.FechaPago.ToString("dd/MM/yyyy")</dd>
+
+            <dt class="col-sm-3">Monto</dt>
+            <dd class="col-sm-9">@Model.Monto.ToString("N2")</dd>
+
+            <dt class="col-sm-3">Forma de Pago</dt>
+            <dd class="col-sm-9">@Model.FormaPago</dd>
+
+            <dt class="col-sm-3">Tipo de Pago</dt>
+            <dd class="col-sm-9">@Model.TipoPago</dd>
+
+            <dt class="col-sm-3">Observaciones</dt>
+            <dd class="col-sm-9">@Model.Observaciones</dd>
+        </dl>
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.IdPagoProveedor)
+
+    <div class="d-flex gap-2 mt-3">
+        <input type="submit" value="Eliminar permanentemente" class="btn btn-danger" />
+        @Html.ActionLink("Cancelar", "Index", null, new { @class = "btn btn-secondary" })
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,76 @@
+﻿@model TesisSGC.ViewModels.FiltroReporteVM
+
+<h2>Generación de Reportes</h2>
+
+@using (Html.BeginForm("GenerarReporte", "Reportes", FormMethod.Get))
+{
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                <label>Tipo de reporte</label>
+                @Html.DropDownListFor(m => m.TipoReporte,
+                 new SelectList(new[]
+                 {
+                        new { Value = "Pagos", Text = "Pagos" },
+                        new { Value = "Socios", Text = "Socios" },
+                        new { Value = "Cuotas", Text = "Cuotas" },
+                        new { Value = "Caja", Text = "Caja" },
+                        new { Value = "Proveedores", Text = "Proveedores" },
+                        new { Value = "PagosProv", Text = "Pagos de proveedores" }
+                 }, "Value", "Text", Model.TipoReporte),
+                 new { @class = "form-select", id = "TipoReporte" })
+            </div>
+
+            <div class="mb-3" id="filtroMes">
+                <label>Mes (opcional)</label>
+                @Html.TextBoxFor(m => m.Mes, "{0:yyyy-MM}", new { type = "month", @class = "form-control" })
+            </div>
+
+            <div class="mb-3" id="filtroSocio">
+                <label>Socio (opcional)</label>
+                @Html.DropDownListFor(m => m.IdSocio,
+                 new SelectList(Model.Socios, "Value", "Text"),
+                 "-- Todos --",
+                 new { @class = "form-select" })
+            </div>
+
+            <div class="mb-3" id="filtroProveedor">
+                <label>Proveedor (opcional)</label>
+                @Html.DropDownListFor(m => m.IdProveedor,
+                    new SelectList(Model.Proveedores, "Value", "Text"),
+                    "-- Todos --",
+                    new { @class = "form-select" })
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+                <button formaction="@Url.Action("ExportarPdf", "Reportes")" class="btn btn-danger">Exportar PDF</button>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        function actualizarFiltros() {
+            var tipo = document.getElementById("TipoReporte").value;
+
+            document.getElementById("filtroMes").style.display = "none";
+            document.getElementById("filtroSocio").style.display = "none";
+            document.getElementById("filtroProveedor").style.display = "none";
+
+            if (tipo === "Pagos" || tipo === "Cuotas") {
+                document.getElementById("filtroMes").style.display = "block";
+                document.getElementById("filtroSocio").style.display = "block";
+            }
+            else if (tipo === "PagosProv") {
+                document.getElementById("filtroMes").style.display = "block";
+                document.getElementById("filtroProveedor").style.display = "block";
+            }
+        }
+
+        document.getElementById("TipoReporte").addEventListener("change", actualizarFiltros);
+
+        // Inicializar al cargar
+        actualizarFiltros();
+    </script>
+}

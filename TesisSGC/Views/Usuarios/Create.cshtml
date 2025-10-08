@@ -1,0 +1,72 @@
+﻿@model Usuario
+
+@{
+    ViewBag.Title = "Crear Usuario";
+}
+
+<h2 class="mb-4">Crear Usuario</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+
+            <!-- Nombre de usuario -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.NombreUsuario, "Nombre de usuario", htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.NombreUsuario, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.NombreUsuario, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Contrasena, "Contraseña", htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Contrasena, new { htmlAttributes = new { @class = "form-control", type = "password" } })
+                @Html.ValidationMessageFor(model => model.Contrasena, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Rol -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Rol, "Rol", htmlAttributes: new { @class = "form-label" })
+                @Html.DropDownListFor(model => model.Rol,
+                    new SelectList(new[] {
+                        new { Value = "administrador", Text = "Administrador" },
+                        new { Value = "socio", Text = "Socio" }
+                    }, "Value", "Text", Model != null ? Model.Rol : ""),
+                    "-- Seleccione un rol --",
+                    new { @class = "form-select" })
+                @Html.ValidationMessageFor(model => model.Rol, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Email, "Correo electrónico", htmlAttributes: new { @class = "form-label" })
+                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", type = "email" } })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <!-- Socio asociado -->
+            <div class="mb-3">
+                @Html.LabelFor(model => model.IdSocio, "Socio asociado (opcional)", htmlAttributes: new { @class = "form-label" })
+
+                @Html.DropDownListFor(model => model.IdSocio,
+                    ViewBag.IdSocio as SelectList,
+                    "-- Sin socio asociado --",
+                    new { @class = "form-select" })
+
+                @Html.ValidationMessageFor(model => model.IdSocio, "", new { @class = "text-danger" })  <!-- Aquí mostramos el error -->
+            </div>
+
+            <!-- Botones -->
+            <div class="d-flex gap-2 mt-4">
+                <input type="submit" value="Crear" class="btn btn-success" />
+                @Html.ActionLink("Volver al listado", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

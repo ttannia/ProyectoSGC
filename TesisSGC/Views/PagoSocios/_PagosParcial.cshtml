@@ -31,7 +31,9 @@
                     <td>@item.Monto.ToString("N2")</td>
                     <td>@item.FormaPago</td>
                     <td>@item.TipoPago</td>
-                    <td>@item.Observaciones</td>
+                    <td class="text-truncate" style="max-width: 100px;" title="@item.Observaciones">
+                        @item.Observaciones
+                    </td>                    
                     <td class="text-center">
                         @Html.ActionLink("Editar", "Edit", new { id = item.IdPagoSocio }, new { @class = "btn btn-sm btn-primary me-1" })
                         @Html.ActionLink("Detalles", "Details", new { id = item.IdPagoSocio }, new { @class = "btn btn-sm btn-info me-1" })

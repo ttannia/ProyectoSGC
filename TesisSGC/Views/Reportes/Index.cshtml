@@ -7,16 +7,22 @@
     <div class="card shadow-sm mb-3">
         <div class="card-body">
             <div class="mb-3">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["Error"]
+                    </div>
+                }
                 <label>Tipo de reporte</label>
                 @Html.DropDownListFor(m => m.TipoReporte,
                  new SelectList(new[]
                  {
-                        new { Value = "Pagos", Text = "Pagos" },
+                        new { Value = "Pagos", Text = "Pagos de socios" },
                         new { Value = "Socios", Text = "Socios" },
                         new { Value = "Cuotas", Text = "Cuotas" },
                         new { Value = "Caja", Text = "Caja" },
                         new { Value = "Proveedores", Text = "Proveedores" },
-                        new { Value = "PagosProv", Text = "Pagos de proveedores" }
+                        new { Value = "PagosProv", Text = "Pagos a proveedores" }
                  }, "Value", "Text", Model.TipoReporte),
                  new { @class = "form-select", id = "TipoReporte" })
             </div>

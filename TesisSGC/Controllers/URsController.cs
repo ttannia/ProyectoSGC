@@ -18,7 +18,10 @@ namespace TesisSGC
         // GET: URs
         public async Task<ActionResult> Index()
         {
-            return View(await db.URs.ToListAsync());
+            return View(await db.URs
+                .OrderByDescending(u => u.Mes)
+                .ToListAsync());
+
         }
 
         // GET: URs/Details/5

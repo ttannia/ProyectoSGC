@@ -20,7 +20,7 @@
         }
         else
         {
-            foreach (var item in Model)
+            foreach (var item in Model.Where(s => s.Estado))
             {
                 <tr>
                     <td>@item.NombreSocio</td>

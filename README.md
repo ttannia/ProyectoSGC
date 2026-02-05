@@ -9,4 +9,4 @@ Para ingresar como Administrador, el usuario que se crea por defecto es:
 El usuario administrador puede crear también un usuario tipo Socio para probar las pantallas y funcionalidades del socio.
 
 ### Nota
-El código principal se encuentra en la rama `master`. 
+El código principal se encuentra en la rama `master`. https://github.com/ttannia/ProyectoSGC/tree/master
